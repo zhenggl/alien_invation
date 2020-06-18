@@ -6,11 +6,12 @@
 # 开发工具：PyCharm
 
 import pygame
+from pygame.sprite import Sprite
 
-
-class Ship:
+class Ship(Sprite):
     def __init__(self, ai_settings, screen):
         """初始化飞船并设置其初始位置"""
+        super(Ship, self).__init__()
         self.screen = screen
         self.ai_settings = ai_settings
         # 加载飞船图像并获取其外接矩形
@@ -22,8 +23,9 @@ class Ship:
         self.rect.centerx = self.screen_rect.centerx
         self.rect.bottom = self.screen_rect.bottom
         # 在飞船的属性center中存储小数值
-        self.center = float(self.rect.centerx)
+        self.centerx = float(self.rect.centerx)
         self.centery = float(self.rect.centery)
+        self.bottom = float(self.screen_rect.bottom)
         # 移动标志
         self.moving_right = False
         self.moving_left = False
@@ -33,15 +35,15 @@ class Ship:
     def update(self):
         """根据移动标志调整飞船位置"""
         if self.moving_right and self.rect.right < self.screen_rect.right:
-            self.center += self.ai_settings.ship_speed_factor
+            self.centerx += self.ai_settings.ship_speed_factor
         if self.moving_left and self.rect.left > 0:
-            self.center -= self.ai_settings.ship_speed_factor
+            self.centerx -= self.ai_settings.ship_speed_factor
         if self.moving_up and self.rect.top > 0:
             self.centery -= self.ai_settings.ship_speed_factor
         if self.moving_down and self.rect.bottom < self.screen_rect.bottom:
             self.centery += self.ai_settings.ship_speed_factor
         # 根据self.center更新rect对象
-        self.rect.centerx = self.center
+        self.rect.centerx = self.centerx
         self.rect.centery = self.centery
 
     def blitme(self):
@@ -51,5 +53,5 @@ class Ship:
 
     def center_ship(self):
         """让飞船在屏幕上居中"""
-        self.center = self.screen_rect.centerx
-        self.centery = self.screen_rect.bottom
+        self.centery = self.screen_rect.bottom - self.rect.height/2
+        self.centerx = self.screen_rect.centerx
